@@ -1,12 +1,9 @@
 {
-    "input": "/var/data/arnot/rws/tst_ground.las",
-    "output": "/var/data/arnot/rws/tst_ground_ept/",
     "reprojection": {
         "in": "EPSG:28992",
         "out": "EPSG:4978",
         "hammer": true
     },
     "scale": 0.001,
-    "threads": 6
+    "threads": 4
 }
-
