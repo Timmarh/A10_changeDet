@@ -167,7 +167,7 @@ def recursive_planes(pyntcloud_pts, n_planes=2, min_pts=100, max_dist=0.2, max_i
 
             # create frame of uid and plane
             ransacplane = pd.DataFrame({
-                'uid': ransac_points.uid,  # :TODO check if the right UID's are selected
+                'uid': ransac_points.uid, 
                 'plane': best_inliers.astype(np.int)
             })
 
