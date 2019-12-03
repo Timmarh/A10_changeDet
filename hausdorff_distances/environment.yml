@@ -1,0 +1,9 @@
+name: hausdorff-distance
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - numpy
+  - scipy
+  - pdal
+  - python-pdal
