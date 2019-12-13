@@ -13,12 +13,15 @@ from functions import (filter_distance, find_distances_centroid,
                        write_to_laz)
 
 
-def main_distances(wkt, method = 'ransac', laz_dir = None):
+def main_distances(wkt_id, wkt, method = 'ransac', laz_dir = None):
     '''
     Function that calculates the difference in height between the top and bottom
     of a bridge over a road between two years. 
 
     in:
+        wkt_id [integer]:
+            Integer value corresponding to the id of the polygon in the database.
+
         wkt [string]: 
             Text representation of a polygon. The polygon lies on the A10 and 
             there are points in this polygon in the paths.
@@ -33,7 +36,7 @@ def main_distances(wkt, method = 'ransac', laz_dir = None):
     '''
 
     assert method in ('ransac', 'pointcloud'), f'method is not ransac or pointcloud but "{method}".'
-    assert isinstance(laz_dir, str), f'write_laz should be a string of the output directory but is {laz_dir}'
+    # assert isinstance(laz_dir, str), f'write_laz should be a string of the output directory but is {laz_dir}'
 
     paths = {
         '2018': config['path_2019'],
@@ -93,7 +96,7 @@ def main_distances(wkt, method = 'ransac', laz_dir = None):
                 print('The output path specified for output laz files is incorrect.')
 
             laz_path.mkdir(parents=False, exist_ok=True)
-            laz_fn = f'{year}'
+            laz_fn = f'{year}/{wkt_id}.laz'
 
             laz_array = rfn.append_fields(pcs[year][['X','Y','Z','Red','Green','Blue']],
                                           'Classification',
@@ -101,8 +104,8 @@ def main_distances(wkt, method = 'ransac', laz_dir = None):
                                           usemask=False,
                                          )
         
-            write_to_laz(laz_array, laz_path.joinpath(f'{year}.laz'))
-            print(f'wrote to {laz_dir}/{year}.laz"')
+            write_to_laz(laz_array, laz_path.joinpath(laz_fn))
+            print(f'wrote to {laz_fn}.laz"')
 
         results[f'model_{year}_{rel_cids[0]}'] = models_year[rel_cids[0]]
         results[f'model_{year}_{rel_cids[1]}'] = models_year[rel_cids[1]]
@@ -140,7 +143,7 @@ def main():
             port=config['port']
         )
 
-    query = f'SELECT id, ST_AsText(geom) wkt FROM {schema}.{table}'
+    query = f'SELECT id, ST_AsText(geom) wkt FROM {schema}.{table} where id = 12'
     result = database.execute_query(query)[0]
 
     for dictionary in result:
@@ -148,7 +151,7 @@ def main():
         wkt = dictionary['wkt']
 
         print(f'clustering id: \t {wkt_id}')
-        results = main_distances(wkt, 'pointcloud', laz_dir = config['output_path'] + f'{wkt_id}')
+        results = main_distances(wkt_id, wkt, 'ransac') # , laz_dir = config['output_path'])
 
         values_list =  [
             results['model_2018_1'].point,

@@ -389,16 +389,6 @@ def find_distances_pcs(planes, relevant_ids, fraction=0.05):
     return distance
 
 
-def calc_iterations(n_points, prob_all_inliers=0.99):
-    '''
-    work in progress
-    '''
-    enumerator = math.log(1 - prob_all_inliers)
-    divider = math.log(1 - 0)
-
-    return iterations
-
-
 def prepare_sql_string(values_list):
     '''
     prepares a string from a list containing np.ndarrays, that is ready to
